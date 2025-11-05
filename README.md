@@ -5,7 +5,7 @@ A simple fruit shop demo application built with HTML, CSS, and JavaScript. This 
 <div align="center">
   <img src="./img/fruit-shop-logo.png" alt="Fruit Shop" width="400" height="auto" />
 </div>
-
+Hoi
 ## Features
 
 - 🍏 **Product Catalog**: Browse fresh fruits (Apple, Banana, Lemon)
