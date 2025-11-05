@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slot Machine - Fruit Shop</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .slot-container { text-align: center; }
+      .slot-display { font-size: 6rem; margin: 1rem 0; }
+      .slot-message { margin-top: 0.5rem; min-height: 1.2rem; }
+      .cart-action-btn { font-size: 1rem; padding: 0.6rem 1rem; }
+    </style>
+  </head>
+  <body>
+    <header role="banner">
+      <div class="header-center">
+        <a href="index.html" class="logo" aria-label="Go to homepage">
+          <img
+            src="img/fruit-shop-logo.png"
+            class="logo-img"
+            alt="Fruit Shop Logo"
+          />
+          <span class="products-text"> View Products </span>
+        </a>
+        <nav role="navigation" aria-label="Main navigation">
+          <a
+            href="basket.html"
+            class="basket-link"
+            aria-label="View shopping basket"
+          >
+            <img
+              src="img/basket-icon.png"
+              class="basket-img"
+              alt="Shopping basket icon"
+            />
+            <span class="basket-text">View shopping basket</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+    <main id="main-content" role="main">
+      <div class="content-box slot-container">
+        <div class="emoji-display slot-display" id="slotDisplay" role="img" aria-live="polite">🎰</div>
+        <h1>Slot Machine</h1>
+        <div class="product-desc" aria-label="Slot description">
+          Spin the slot machine to randomly get one of the available fruits. The result will be added to your basket.
+        </div>
+        <div class="button-container">
+          <button
+            id="addToBasket"
+            class="cart-action-btn"
+            aria-label="Spin slot and add random fruit to basket"
+          >
+            Add to Basket
+          </button>
+        </div>
+        <div class="slot-message" id="slotMessage" aria-live="polite"></div>
+      </div>
+    </main>
+    <footer>
+      <a
+        href="https://www.linkedin.com/in/timlolkema/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        By Tim Lolkema
+      </a>
+    </footer>
+    <script src="shop.js"></script>
+    <script>
+      (function () {
+        const display = document.getElementById('slotDisplay');
+        const button = document.getElementById('addToBasket');
+        const message = document.getElementById('slotMessage');
+
+        function getFruitKeys() {
+          // Use keys from PRODUCTS defined in shop.js
+          try {
+            return Object.keys(PRODUCTS).filter(k => k !== 'slot');
+          } catch (err) {
+            return ['apple','banana','lemon'];
+          }
+        }
+
+        function randomChoice(arr) {
+          return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        button.addEventListener('click', async function () {
+          const keys = getFruitKeys();
+          if (!keys || keys.length === 0) return;
+          button.disabled = true;
+          message.textContent = 'Spinning...';
+
+          // Simple spin animation: cycle emojis quickly for 1.6s
+          const start = Date.now();
+          const duration = 1600;
+          const interval = 90;
+          const emojis = keys.map(k => PRODUCTS[k].emoji || '?');
+          let idx = 0;
+          const timer = setInterval(() => {
+            display.textContent = emojis[idx % emojis.length];
+            idx++;
+            if (Date.now() - start >= duration) {
+              clearInterval(timer);
+              // pick final random fruit
+              const chosenKey = randomChoice(keys);
+              const chosen = PRODUCTS[chosenKey];
+              display.textContent = chosen.emoji || '🍏';
+              addToBasket(chosenKey);
+              message.textContent = `${chosen.name} added to basket!`;
+              // re-enable after short delay so user sees message
+              setTimeout(() => {
+                button.disabled = false;
+                message.textContent = '';
+              }, 900);
+            }
+          }, interval);
+        });
+      })();
+    </script>
+  </body>
+</html>
